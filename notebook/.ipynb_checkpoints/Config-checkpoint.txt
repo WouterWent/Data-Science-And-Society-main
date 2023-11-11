@@ -1,0 +1,6 @@
+[DATABASE]
+USER = Robbert
+PASSWORD = INVICTUS23#
+HOST = invictus-db-01.postgres.database.azure.com
+PORT = 5432
+NAME = invictus

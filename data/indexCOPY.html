@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Incident Dashboard</title>
+    <style>
+        /* Blue Background with Dark Blue Text */
+        body {
+            background-color: #0077b6; /* Deep blue background */
+            color: #00507d; /* Dark blue text color */
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .chart {
+            width: 100%; /* Adjust the width as needed */
+        }
+        
+        /* Blue and White Color Scheme for Headings */
+        h1, h2 {
+            color: #00507d; /* Dark blue headings color */
+        }
+
+        /* Improve contrast for regular text */
+        p {
+            color: #00507d; /* Dark blue text color for paragraphs */
+        }
+
+        /* Improve contrast for table text */
+        table, tr, td {
+            color: #00507d; /* Dark blue text color for table content */
+        }
+
+        /* Styles for Total Incidents and Monthly Incident Change blocks */
+        .info-block {
+            background-color: #ebebeb; /* Light gray background for the block */
+            padding: 10px; /* Adjust padding as needed */
+            text-align: center; /* Center-align text */
+            margin: 10px; /* Add margin to separate from other content */
+            width: 350px; /* Adjusted width to accommodate content */
+            height: 150px; /* Set the desired height (reduced height) */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Font sizes for both blocks */
+        .info-block h2 {
+            font-size: 20px; /* Adjust font size as needed (smaller title) */
+            font-weight: bold; /* Bold title */
+        }
+
+        .info-block p {
+            font-size: 30px; /* Adjust font size as needed (larger content) */
+        }
+        
+        /* Customize the styling of the Current Valence and Trend block as needed */
+        .valence-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .valence {
+            margin-right: 5px; /* Add spacing between valence and arrow */
+        }
+
+        .percent-arrow-container {
+            display: flex;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Incident Dashboard</h1>
+        <p>This dashboard showcases incidents in the Ukraine-Russia war</p>
+    
+        <table>
+            <tr>
+                <td>
+                    <div class="info-block">
+                        <h2>Last Data Update</h2>
+                        <p>{{ last_data_update }}</p>
+                    </div>
+                </td>
+                <td>
+                    <div class="info-block">
+                        <h2>Weekly Valence</h2>
+                        <div class="valence-container">
+                            <p class="valence">{{ current_valence|round(3) }}</p>
+                            <p class="valence-arrow">
+                                {% if valence_trend == 'up' %}
+                                    <span style="color: green;">&#x25B2;</span> <!-- Green upward arrow -->
+                                {% elif valence_trend == 'down' %}
+                                    <span style="color: red;">&#x25BC;</span> <!-- Red downward arrow -->
+                                {% else %}
+                                    <span style="color: black;">&#x25AC;</span> <!-- Black square or any other symbol for stable trend -->
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <div class="info-block">
+                        <h2>Monthly Incident Change</h2>
+                        <div class="percent-arrow-container">
+                            {% if change_from_last_month is defined %}
+                                <p class="percent-change">
+                                    {{ change_from_last_month|round(2) }}%
+                                    <span class="percent-arrow">
+                                        {% if percentage_change > 0 %}
+                                            <span style="color: red;">&#x25B2;</span> <!-- Red upward arrow for increase -->
+                                        {% elif percentage_change < 0 %}
+                                            <span style="color: green;">&#x25BC;</span> <!-- Green downward arrow for decrease -->
+                                        {% else %}
+                                            <span style="color: black;">&#x25AC;</span> <!-- Black square or any other symbol for stable or no change -->
+                                        {% endif %}
+                                    </span>
+                                </p>
+                            {% else %}
+                                <p class="percent-change">N/A</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <div class="info-block">
+                        <h2>Total Incidents</h2>
+                        <p>{{ total_incidents_text|safe }}</p>
+                    </div>
+                </td>
+            </tr>            
+        </table>
+        <!-- Charts Table -->
+        <table>
+            <tr>
+                <td><div class="chart" id="music-scatter-plot-div">{{ music_scatter_plot|safe }}</div></td>
+                <td><div class="chart" id="incident-chart-div">{{ incidents_chart_plot|safe }}</div></td>
+            </tr>
+            <tr>
+                <td><div class "chart" id="music-chart-div">{{ music_chart_plot|safe }}</div></td>
+                <td><div class="chart" id="mood-distribution-chart-div">{{ mood_distribution_chart|safe }}</div>
+                </td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>
